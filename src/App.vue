@@ -91,7 +91,7 @@ function startTime() {
   <div>
     <h1 class="start" v-if="!start && winlose === 0" @click.prevent="playAudio(music); startTime()">START</h1>
     <Game v-else-if="!lose" class="game"></Game>
-    <div v-show="start"><h1>{{minute}} : {{second}}</h1><div>YOUR GOAL: {{ mod - this.$store.state.wins }} wins</div></div>
+    <div v-show="start"><h1>{{minute}} : {{second}}</h1><div>YOUR GOAL: {{ mod - store.state.wins }} wins</div></div>
     <div  v-if="winlose === 0 && !start" class="difficulty">
       <button @click.prevent="chooseAudio(easy, 1)" :class="store.state.level === 1 ? 'active' : ''">easy</button>
       <button @click.prevent="chooseAudio(normal, 2)" :class="store.state.level === 2 ? 'active' : ''">normal</button>
@@ -121,6 +121,6 @@ function startTime() {
   justify-content: center;
 }
 .active {
-  background-color: #44ff00;
+  background-color: #ff8811;
 }
 </style>

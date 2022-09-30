@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/laba5/",
     "preview": "vite preview"
   },
   "dependencies": {
