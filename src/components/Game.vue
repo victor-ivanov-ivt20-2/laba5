@@ -5,6 +5,7 @@
           <img
             v-if="cards[randomArray[4 * i - (4 - j) - 1]].opened === true"
             src="../assets/opened.png"
+            style="opacity: 0"
             draggable="false"
             alt=""
           />
@@ -14,21 +15,22 @@
             "
             src="../assets/back.png"
             @click.prevent="Click(4 * i - (4 - j))"
-            style="cursor: pointer"
+            style="cursor: pointer; opacity: 1;"
             draggable="false"
             alt=""
           />
           <img
             v-else-if="4 * i - (4 - j) === choosen[0]"
             :src="getImageUrl(cards[randomArray[4 * i - (4 - j) - 1]].img)"
+            :style="cards[randomArray[4 * i - (4 - j) - 1]].trans === true ? 'opacity: 0; transition: all .3s;': ' opacity: 1' "
             draggable="false"
             alt=""
           />
           <img
             v-else-if="4 * i - (4 - j) === choosen[1]"
             :src="getImageUrl(cards[randomArray[4 * i - (4 - j) - 1]].img)"
-            @click.prevent="Click(4 * i - (4 - j))"
-            style="cursor: pointer"
+            @click.prevent="Click(4 * i - (4 - j))" 
+            :style="cards[randomArray[4 * i - (4 - j) - 1]].trans === true ? 'opacity: 0;  transition: all .3s;': 'opacity: 1' "
             draggable="false"
             alt=""
           />
@@ -47,6 +49,7 @@ const j_size = ref(4);
 const counter = ref(0);
 const wins = ref(0);
 const randomArray = ref([]);
+
 store.state.wins = 0;
 let check = false;
 function Click(i) {
@@ -61,6 +64,13 @@ function Click(i) {
     check = true;
     let w = wins.value;
     setTimeout(() => {
+      if (randomArray.value[choosen.value[0] - 1] ===
+        randomArray.value[choosen.value[1] - 1]) {
+          cards.value[randomArray.value[choosen.value[0] - 1]].trans = true;
+        }
+    }, 10);
+    
+    setTimeout(() => {
       if (
         randomArray.value[choosen.value[0] - 1] ===
         randomArray.value[choosen.value[1] - 1]
@@ -68,7 +78,7 @@ function Click(i) {
         const correctAudio = new Audio(
           new URL("../assets/correct.mp3", import.meta.url).href
         );
-        correctAudio.volume = 0.2;
+        correctAudio.volume = 0.1;
         correctAudio.play();
         cards.value[randomArray.value[choosen.value[0] - 1]].opened = true;
         counter.value++;
@@ -76,6 +86,7 @@ function Click(i) {
           counter.value = 0;
           for (let i = 0; i < cards.value.length; i++) {
             cards.value[i].opened = false;
+            cards.value[i].trans = false;
           }
           store.commit('addWins'); random();
         }
@@ -83,7 +94,7 @@ function Click(i) {
         const wrongAudio = new Audio(
           new URL("../assets/wrong.mp3", import.meta.url).href
         );
-        wrongAudio.volume = 0.2;
+        wrongAudio.volume = 0.1;
         wrongAudio.play();
       }
       choosen.value[0] = -1;
@@ -126,15 +137,24 @@ function random() {
 }
 random();
 const cards = ref([
-  { img: "card-1.png", opened: false },
-  { img: "card-2.png", opened: false },
-  { img: "card-3.png", opened: false },
-  { img: "card-4.png", opened: false },
-  { img: "card-5.png", opened: false },
-  { img: "card-6.png", opened: false },
-  { img: "card-7.png", opened: false },
-  { img: "card-8.png", opened: false },
+  { img: "card-1.png", opened: false, trans: false },
+  { img: "card-2.png", opened: false, trans: false },
+  { img: "card-3.png", opened: false, trans: false },
+  { img: "card-4.png", opened: false, trans: false },
+  { img: "card-5.png", opened: false, trans: false },
+  { img: "card-6.png", opened: false, trans: false },
+  { img: "card-7.png", opened: false, trans: false },
+  { img: "card-8.png", opened: false, trans: false },
 ]);
 </script>
 
-<style></style>
+<style>
+.opened-1 {
+transition: opacity .9s !important;
+opacity: 0;
+}
+.opened-2 {
+  transition: opacity .9s !important; 
+opacity: 0;
+}
+</style>

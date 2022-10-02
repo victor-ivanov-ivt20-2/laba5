@@ -1,6 +1,6 @@
 <script setup>
 import Game from './components/Game.vue';
-import {ref} from 'vue'
+import {ref, watch} from 'vue'
 import {useStore} from 'vuex'
 const store = useStore();
 const getImageUrl = (name) => {
@@ -13,8 +13,21 @@ const start = ref(false);
 const easy = ref(new Audio(getImageUrl('backg.mp3')))
 const normal = ref(new Audio(getImageUrl('hard.mp3')))
 const hard = ref(new Audio(getImageUrl('normal.mp3')))
+const victory = ref(new Audio(getImageUrl('victory.mp3')))
+const gameover = ref(new Audio(getImageUrl('gameover.mp3')))
 const winlose = ref(0)
-const music = ref(easy);
+const music = ref(0);
+watch(winlose, (winlose, prevWinlose) => {
+  if (winlose === 1) {
+    victory.value.volume = 0.02;
+    victory.value.play();
+  }
+  else if (winlose === 2) {
+    gameover.value.volume = 0.02;
+    gameover.value.play();
+  }
+})
+
 function chooseAudio(audio, i) {
   music.value = audio;
   store.commit('selectLevel', i)
@@ -65,7 +78,7 @@ function startTime() {
         music.value.pause();
         music.value.currentTime = 0;
         winlose.value = 1;
-        setTimeout(() => {winlose.value = 0}, 5000)
+        setTimeout(() => {winlose.value = 0}, 10000)
     }
     if (timez <= 0) {
         clearInterval(timer);
@@ -74,7 +87,7 @@ function startTime() {
         music.value.pause();
         music.value.currentTime = 0;
         winlose.value = 2;
-        setTimeout(() => {winlose.value = 0}, 5000)
+        setTimeout(() => {winlose.value = 0}, 2000)
     } else {
         minute.value = Math.trunc(minutes);
         second.value = seconds;
@@ -92,21 +105,29 @@ function startTime() {
     <h1 class="start" v-if="!start && winlose === 0" @click.prevent="playAudio(music); startTime()">START</h1>
     <Game v-else-if="!lose" class="game"></Game>
     <div v-show="start"><h1>{{minute}} : {{second}}</h1><div>YOUR GOAL: {{ mod - store.state.wins }} wins</div></div>
-    <div  v-if="winlose === 0 && !start" class="difficulty">
+    <div  v-if="winlose === 0 && !start" class="difficulty" style="margin-top: 30px;">
       <button @click.prevent="chooseAudio(easy, 1)" :class="store.state.level === 1 ? 'active' : ''">easy</button>
       <button @click.prevent="chooseAudio(normal, 2)" :class="store.state.level === 2 ? 'active' : ''">normal</button>
       <button @click.prevent="chooseAudio(hard, 3)" :class="store.state.level === 3 ? 'active' : ''">hard</button>
     </div>
     <div v-else-if="winlose === 1">
-      WIN
+      <h1 class="game" style="font-size: 96px">
+        WIN
+      </h1>
     </div>
     <div v-else-if="winlose === 2">
-      LOSE
+      <h1 class="game" style="font-size: 96px">
+        LOSE
+      </h1>
     </div>
   </div>
 </template>
 
 <style>
+  button {
+    border: none; outline: none;
+    font-size: 32px;
+  }
 .game {
   position: absolute;
   top: 50%; left: 50%;
@@ -118,9 +139,13 @@ function startTime() {
   font-weight: 700;
   cursor:pointer;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 50px;
 }
 .active {
-  background-color: #ff8811;
+  background-color: #aeffa7;
+  color: #000;
 }
 </style>
